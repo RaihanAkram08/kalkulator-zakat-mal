@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hitung Zakat</title>
+    <style>
+        form {
+            margin: 50px auto;
+            width: 80%;
+            border: 1px solid black;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            padding: 20px;
+            background-color: rgb(118, 223, 107);
+        }
+
+        form label {
+            display: flex;
+            flex-direction: column;
+            width: 80%;
+        }
+
+        form label input {
+            padding: 5px 8px;
+        }
+
+        form div {
+            align-items: flex-start;
+            width: 80%;
+        }
+
+        form div button {
+            padding: 8px 13px;
+            border-radius: 10px;
+            border: none;
+            background-color: rgb(58, 255, 32);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <form id="zakatForm">
+        <label for="gajiUtama">
+            Gaji Saya per Bulan
+            <input type="text" name="gajiUtama" id="gajiUtama" required>
+        </label>
+        <label for="gajiTambahan">
+            Gaji Tambahan per Bulan
+            <input type="text" name="gajiTambahan" id="gajiTambahan">
+        </label>
+        <label for="gajiTotal">
+            Jumlah Gaji per Tahun
+            <input type="text" name="gajiTotal" id="gajiTotal" readonly>
+        </label>
+        <label for="nishabTahun">
+            Nishab per Tahun
+            <input type="text" name="nishabTahun" id="nishabTahun" required>
+        </label>
+        <div><button type="submit">Hitung Zakat</button></div>
+        <div id="caption"></div>
+    </form>
+
+    <script>
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        function unformatNumber(num) {
+            return num.toString().replace(/\./g, "");
+        }
+
+        document.getElementById("gajiUtama").addEventListener("input", function(event) {
+            const value = unformatNumber(event.target.value);
+            event.target.value = formatNumber(value);
+        });
+
+        document.getElementById("gajiTambahan").addEventListener("input", function(event) {
+            const value = unformatNumber(event.target.value);
+            event.target.value = formatNumber(value);
+        });
+
+        document.getElementById("nishabTahun").addEventListener("input", function(event) {
+            const value = unformatNumber(event.target.value);
+            event.target.value = formatNumber(value);
+        });
+
+        document.getElementById("zakatForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const gajiUtama = parseFloat(unformatNumber(document.getElementById("gajiUtama").value)) || 0;
+            const gajiTambahan = parseFloat(unformatNumber(document.getElementById("gajiTambahan").value)) || 0;
+            const gajiTotal = ((gajiUtama + gajiTambahan) * 12);
+            document.getElementById("gajiTotal").value = formatNumber(gajiTotal);
+
+            const nishabTahun = parseFloat(document.getElementById("nishabTahun").value.replace(/\./g, ""));
+            let caption = document.getElementById("caption");
+
+            caption.textContent = "";
+
+            let message = "";
+            if (gajiTotal >= nishabTahun) {
+                const zakat = (gajiTotal * 2.5) / 100
+                caption.textContent = `Zakat yang harus Anda keluarkan adalah ${formatNumber(zakat)}`;
+            } else {
+                caption.textContent = "Anda tidak wajib membayar zakat";
+            }
+        });
+    </script>
+</body>
+</html>
